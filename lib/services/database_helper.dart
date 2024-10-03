@@ -26,7 +26,9 @@ class DatabaseHelper {
     CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
-    email TEXT
+    nickname TEXT,
+    email TEXT,
+    phone TEXT
     )
     ''');
   }

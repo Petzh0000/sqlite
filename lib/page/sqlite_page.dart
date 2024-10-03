@@ -16,7 +16,9 @@ class _SqlitePageState extends State<SqlitePage> {
   //SQLite ในรูปแบบ List ของ Map ซึ่งแต่ละ Map แทนข้อมูลหนึ่งรายการ
   DatabaseHelper dbHelper = DatabaseHelper();
   final _nameController = TextEditingController();
+  final _nicknameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   List<Map<String, dynamic>> users = [];
 
   //สร้างฟังก์ชัน _addUser ที่ทําหน้าที่เพิ่มข้อมูลใหม่ลงในฐานข้อมูล โดยใช้
@@ -25,20 +27,28 @@ class _SqlitePageState extends State<SqlitePage> {
   Future<void> _addUser() async {
     await dbHelper.insertUser({
       'name': _nameController.text,
+      'nickname': _nicknameController.text,
       'email': _emailController.text,
+      'phone': _phoneController.text,
     });
     _nameController.clear();
+    _nicknameController.clear();
     _emailController.clear();
+    _phoneController.clear();
   }
 
   Future<void> _updateUser(int id) async {
     await dbHelper.updateUser({
       'id': id,
       'name': _nameController.text,
+      'nickname': _nicknameController.text,
       'email': _emailController.text,
+      'phone': _phoneController.text,
     });
     _nameController.clear();
+    _nicknameController.clear();
     _emailController.clear();
+    _phoneController.clear();
     _refreshUsers();
   }
 
@@ -52,7 +62,9 @@ class _SqlitePageState extends State<SqlitePage> {
     if (id != null) {
       final existingUser = users.firstWhere((element) => element['id'] == id);
       _nameController.text = existingUser['name'];
+      _nicknameController.text = existingUser['nickname'];
       _emailController.text = existingUser['email'];
+      _phoneController.text = existingUser['phone'];
     }
 
     showModalBottomSheet(
@@ -72,11 +84,19 @@ class _SqlitePageState extends State<SqlitePage> {
               children: [
                 TextField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'ชื่อ'),
+                  decoration: InputDecoration(labelText: 'ชื่อจริง นามสกุล'),
+                ),
+                TextField(
+                  controller: _nicknameController,
+                  decoration: InputDecoration(labelText: 'ชื่อเล่น'),
                 ),
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(labelText: 'อีเมล'),
+                ),
+                TextField(
+                  controller: _phoneController,
+                  decoration: InputDecoration(labelText: 'เบอร์โทร'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -126,31 +146,32 @@ class _SqlitePageState extends State<SqlitePage> {
       ),
       body: users.isEmpty
           ? Center(
-              child: Text(
-                  'ไม่มีข้อมูล กรุณาเพิ่มข้อมูลใหม่'), // ข้อความแสดงที่กลางหน้าจอเมื่อไม่มีข้อมูล
-            )
+        child: Text(
+            'ไม่มีข้อมูล กรุณาเพิ่มข้อมูลใหม่'), // ข้อความแสดงที่กลางหน้าจอเมื่อไม่มีข้อมูล
+      )
           : ListView.builder(
-              itemCount: users.length, // จํานวนข้อมูลในรายการ
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(users[index]['name']),
-                  subtitle: Text(users[index]['email']),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () => _showForm(users[index]['id']),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () => _deleteUser(users[index]['id']),
-                      ),
-                    ],
-                  )
-                );
-              },
-            ),
+        itemCount: users.length, // จํานวนข้อมูลในรายการ
+        itemBuilder: (context, index) {
+          return ListTile(
+              title: Text('ชื่อจริง-นามสกุล ${users[index]['name']}'),
+              subtitle: Text('ชื่อเล่น: ${users[index]['nickname']}\nอีเมล: ${users[index]['email']}\nเบอร์: ${users[index]['phone']}'),
+
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () => _showForm(users[index]['id']),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => _deleteUser(users[index]['id']),
+                  ),
+                ],
+              )
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showForm(null),
         child: Icon(Icons.add),
