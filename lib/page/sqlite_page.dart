@@ -153,7 +153,7 @@ class _SqlitePageState extends State<SqlitePage> {
         itemCount: users.length, // จํานวนข้อมูลในรายการ
         itemBuilder: (context, index) {
           return ListTile(
-              title: Text('ชื่อจริง-นามสกุล ${users[index]['name']}'),
+              title: Text('ชื่อจริง-นามสกุล: ${users[index]['name']}'),
               subtitle: Text('ชื่อเล่น: ${users[index]['nickname']}\nอีเมล: ${users[index]['email']}\nเบอร์: ${users[index]['phone']}'),
 
               trailing: Row(
